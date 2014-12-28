@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World of Shit!</string>
+    <string name="app_name">Chat Too Much</string>
+    <string name="btn_text_send_sms">Send</string>
+    <string name="btn_text_clean_db">Clean DB</string>
+    <string name="btn_text_set_service_export_sms_time">Set Time</string>
+    <string name="btn_text_set_service_export_sms_count">Set Count</string>
+    <string name="btn_text_run_service_export_sms">Run</string>
+    <string name="btn_text_gss_client">Gss Client</string>
+</resources>
