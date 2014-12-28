@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- http://developer.android.com/resources/samples/SampleSyncAdapter/res/xml/authenticator.html -->
+
+<!-- The attributes in this XML file provide configuration information -->
+<!-- for the Account Manager. -->
+
+<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="org.gdocument.gchattoomuch.auth"
+    android:icon="@drawable/icon"
+    android:smallIcon="@drawable/icon"
+    android:label="@string/label"
+/>
