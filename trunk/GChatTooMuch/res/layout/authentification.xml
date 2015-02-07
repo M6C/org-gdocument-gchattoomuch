@@ -19,19 +19,29 @@ http://developer.android.com/resources/samples/SampleSyncAdapter/res/layout/logi
             android:paddingTop="5dip"
             android:paddingBottom="13dip"
             android:paddingLeft="20dip"
-            android:paddingRight="20dip">
+            android:paddingRight="20dip"
+        >
+	        <EditText
+	            android:id="@+id/tvSmsContent"
+	            android:layout_width="match_parent"
+	            android:layout_height="match_parent"
+	        />
             <TextView
                 android:id="@+id/message"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dip" />
+                android:layout_marginBottom="5dip"
+                android:visibility="gone"
+            />
             <TextView
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/login_activity_username_label" />
+                android:text="@string/login_activity_username_label"
+                android:visibility="gone"
+            />
             <EditText
                 android:id="@+id/username_edit"
                 android:singleLine="true"
@@ -41,14 +51,18 @@ http://developer.android.com/resources/samples/SampleSyncAdapter/res/layout/logi
                 android:scrollHorizontally="true"
                 android:capitalize="none"
                 android:autoText="false"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:visibility="gone"
+            />
             <TextView
                 android:id="@+id/username_fixed"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:singleLine="true"
                 android:layout_marginTop="2dip"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+            />
             <TextView
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="bold"
@@ -56,7 +70,9 @@ http://developer.android.com/resources/samples/SampleSyncAdapter/res/layout/logi
                 android:layout_marginTop="2dip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/login_activity_password_label" />
+                android:text="@string/login_activity_password_label"
+                android:visibility="gone"
+            />
             <EditText
                 android:id="@+id/password_edit"
                 android:singleLine="true"
@@ -67,13 +83,17 @@ http://developer.android.com/resources/samples/SampleSyncAdapter/res/layout/logi
                 android:capitalize="none"
                 android:autoText="false"
                 android:password="true"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:visibility="gone"
+            />
             <TextView
                 android:id="@+id/message_bottom"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dip" />
+                android:layout_marginBottom="5dip"
+                android:visibility="gone"
+            />
         </LinearLayout>
     </ScrollView>
     <HorizontalScrollView
@@ -92,7 +112,7 @@ http://developer.android.com/resources/samples/SampleSyncAdapter/res/layout/logi
 	            android:id="@+id/btn_ok"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:text="@string/login_activity_ok_button"
+	            android:text="@string/login_activity_login_button"
 	            android:onClick="onClickLogin" />
 	
 		    <Button
@@ -100,23 +120,32 @@ http://developer.android.com/resources/samples/SampleSyncAdapter/res/layout/logi
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 		        android:text="@string/btn_text_send_sms"
-	            android:onClick="onClickSendSms"
+	            android:onClick="onClickSend"
+	            android:visibility="gone"
 		     />
-	
+
 		    <Button
-		        android:id="@+id/btn_clean_db"
+		        android:id="@+id/btn_clean_db_sms"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-		        android:text="@string/btn_text_clean_db"
-	            android:onClick="onClickCleanDb"
+		        android:text="@string/btn_text_clean_db_sms"
+	            android:onClick="onClickCleanDbSms"
 		     />
-	
+
 		    <Button
-		        android:id="@+id/btn_text_set_service_export_sms_time"
+		        android:id="@+id/btn_clean_db_contact"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-		        android:text="@string/btn_text_set_service_export_sms_time"
-	            android:onClick="onClickSetServiceExportSmsTime"
+		        android:text="@string/btn_text_clean_db_contact"
+	            android:onClick="onClickCleanDbContact"
+		     />
+		    
+		    <Button
+		        android:id="@+id/btn_text_set_service_export_time"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+		        android:text="@string/btn_text_set_service_export_time"
+	            android:onClick="onClickSetServiceExportTime"
 		     />
 	
 		    <Button
@@ -126,13 +155,21 @@ http://developer.android.com/resources/samples/SampleSyncAdapter/res/layout/logi
 		        android:text="@string/btn_text_set_service_export_sms_count"
 	            android:onClick="onClickSetServiceExportSmsCount"
 		     />
-
+	
 		    <Button
-		        android:id="@+id/btn_text_run_service_export_sms"
+		        android:id="@+id/btn_text_set_service_export_contact_count"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-		        android:text="@string/btn_text_run_service_export_sms"
-	            android:onClick="onClickRunServiceExportSms"
+		        android:text="@string/btn_text_set_service_export_contact_count"
+	            android:onClick="onClickSetServiceExportContactCount"
+		     />
+		    
+		    <Button
+		        android:id="@+id/btn_text_run_service_export"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+		        android:text="@string/btn_text_run_service_export"
+	            android:onClick="onClickRunServiceExport"
 		     />
 
 		    <Button
@@ -142,6 +179,13 @@ http://developer.android.com/resources/samples/SampleSyncAdapter/res/layout/logi
 		        android:text="@string/btn_text_gss_client"
 	            android:onClick="onClickGssClient"
 		     />
+
+		    <Button
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:text="@string/btn_text_send_apk"
+	            android:id="@+id/btnSendAPK"
+		    />
 		</LinearLayout>
 	</HorizontalScrollView>
 </LinearLayout>

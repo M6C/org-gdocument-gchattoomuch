@@ -11,7 +11,7 @@
     <!-- Label above password EditText -->
     <string name="login_activity_password_label">Mot de passe</string>
     <!-- Button to sign in after entering username and password -->
-    <string name="login_activity_ok_button">Valider</string>
+    <string name="login_activity_login_button">Login</string>
 
     <!-- Title string for Login activity-->
     <string name="ui_activity_title">Connexion</string>

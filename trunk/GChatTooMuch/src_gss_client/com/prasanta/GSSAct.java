@@ -17,26 +17,32 @@ package com.prasanta;
 
 import java.util.ArrayList;
 
+import org.gdocument.gchattoomuch.R;
 import org.gdocument.gchattoomuch.manager.AuthentificationManager;
 import org.gdocument.gchattoomuch.task.UserLoginTask;
 import org.gdocument.gchattoomuch.task.UserLoginTask.IAuthenticationResult;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cameleon.common.android.factory.FactoryDialog;
 import com.pras.SpreadSheet;
 import com.pras.SpreadSheetFactory;
+import com.pras.WorkSheet;
 import com.pras.auth.Authenticator;
 
 /**
@@ -103,6 +109,7 @@ public class GSSAct extends Activity implements IAuthenticationResult {
 	}
 
 	private class MyTask extends AsyncTask {
+		private boolean onLongClick = false;
 
 //		@Override
 //		protected void onPreExecute() {
@@ -143,20 +150,51 @@ public class GSSAct extends Activity implements IAuthenticationResult {
 		    	
 		    	list.setOnItemClickListener(new OnItemClickListener(){
 
-					public void onItemClick(AdapterView<?> adapterView, View view,
-							int position, long id) {
-						// Show details of the SpreadSheet
-						if(position == 0)
-							return;
-						
-						Toast.makeText(GSSAct.this.getApplicationContext(), "Showing SP details, please wait...", Toast.LENGTH_LONG).show();
-						
-						// Start SP Details Activity 
-						Intent i = new Intent(GSSAct.this, GSSDetails.class);
-						i.putExtra("sp_id", position - 1);
-						startActivity(i);
+					public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+						if (!onLongClick) {
+							// Show details of the SpreadSheet
+							if(position == 0)
+								return;
+							
+							Toast.makeText(GSSAct.this.getApplicationContext(), "Showing SP details, please wait...", Toast.LENGTH_LONG).show();
+							
+							// Start SP Details Activity 
+							Intent i = new Intent(GSSAct.this, GSSDetails.class);
+							i.putExtra("sp_id", position - 1);
+							startActivity(i);
+						} else {
+							onLongClick = false;
+						}
 					}
 		    	});
+		    	list.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+					public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+						if (!onLongClick) {
+							onLongClick = true;
+							// Read Spread Sheet list from the server.
+							final SpreadSheetFactory factory = SpreadSheetFactory.getInstance();
+							// Read from local Cache
+							ArrayList<SpreadSheet> sps = factory.getAllSpreadSheets(false);
+							final SpreadSheet sp = sps.get(position - 1);
+							if (sp != null) {
+								OnClickListener onClickOkListener = new OnClickListener() {
+									public void onClick(DialogInterface dialog, int which) {
+										new AsyncTask() {
+											@Override
+											protected Object doInBackground(Object... params) {
+												factory.deleteSpreadSheet(sp.getKey());
+												return null;
+											}
+										}.execute();
+									}
+								};
+						    	FactoryDialog.getInstance().buildOkCancelDialog(GSSAct.this, onClickOkListener, R.string.app_name, R.string.txt_delete).show();
+							}
+						}
+						return false;
+					}
+				});
 		    	setContentView(list);
 		    }
 		}

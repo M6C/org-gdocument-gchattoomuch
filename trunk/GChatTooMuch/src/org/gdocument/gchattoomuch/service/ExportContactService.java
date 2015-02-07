@@ -1,6 +1,6 @@
 package org.gdocument.gchattoomuch.service;
 
-import org.gdocument.gchattoomuch.business.ExportSmsBusiness;
+import org.gdocument.gchattoomuch.business.ExportContactBusiness;
 import org.gdocument.gchattoomuch.business.TraceExportBusiness;
 import org.gdocument.gchattoomuch.log.Logger;
 import org.gdocument.gchattoomuch.manager.ConnectionManager;
@@ -9,17 +9,17 @@ import org.gdocument.gchattoomuch.manager.ScheduleServiceManager;
 import android.app.IntentService;
 import android.content.Intent;
 
-public class ExportSmsService extends IntentService {
+public class ExportContactService extends IntentService {
 
-	private static final String TAG = ExportSmsService.class.getName();
+	private static final String TAG = ExportContactService.class.getName();
 
 	public static final String EXTRA_DATA_FORCE = "EXTRA_DATA_FORCE";
 
-	private ExportSmsBusiness exportSmsBusiness;
+	private ExportContactBusiness exportContactBusiness;
 
-    public ExportSmsService() {
+    public ExportContactService() {
 		super(TAG);
-		exportSmsBusiness = new ExportSmsBusiness();
+		exportContactBusiness = new ExportContactBusiness();
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class ExportSmsService extends IntentService {
 		try {
 			boolean force = intent.getBooleanExtra(EXTRA_DATA_FORCE, false);
 			if (new ConnectionManager(this).isWifiConnected() || force) {
-				exportSmsBusiness.exportSms(this);
+				exportContactBusiness.exportContact(this);
 			} else {
 				traceWifiState(TraceExportBusiness.DATA_STATE_NOT_CONNECTED);
 			}
@@ -40,13 +40,13 @@ public class ExportSmsService extends IntentService {
 
 	@Override
 	public void onDestroy() {
-		ScheduleServiceManager.getInstance(this).scheduleExportSms();
+		ScheduleServiceManager.getInstance(this).scheduleExportContact();
 		super.onDestroy();
 	}
 
 	private void traceWifiState(String state) {
 		try {
-			new TraceExportBusiness().traceExportSms(this, TraceExportBusiness.TYPE.WIFI_NOT_CONNECTED , state);
+			new TraceExportBusiness().traceExportContact(this, TraceExportBusiness.TYPE.WIFI_NOT_CONNECTED , state);
 		} catch(RuntimeException ex) {
 			logMe(ex);
 		}

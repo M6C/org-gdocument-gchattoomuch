@@ -1,4 +1,4 @@
-package org.gdocument.gchattoomuch.mapper;
+package org.gdocument.gchattoomuch.manager.mapper;
 
 import org.gdocument.gchattoomuch.model.Sms;
 
