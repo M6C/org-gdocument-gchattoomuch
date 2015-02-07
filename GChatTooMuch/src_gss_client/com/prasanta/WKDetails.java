@@ -24,12 +24,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 import com.pras.SpreadSheet;
 import com.pras.SpreadSheetFactory;
@@ -43,14 +43,14 @@ import com.pras.WorkSheetRow;
  */
 public class WKDetails extends Activity {
 	
-	int wkID;
-	int spID;
 	ArrayList<WorkSheetRow> rows;
 	String[] cols;
 	ListView list;
 	TextView tv;
 	boolean listInverse = false;
-	
+	private int wkID;
+	private int spID;
+
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -66,13 +66,21 @@ public class WKDetails extends Activity {
 		list = new ListView(this.getApplicationContext());
 		tv = new TextView(this.getApplicationContext());
 		
-		new MyTask().execute();
+		new MyTask(wkID, spID).execute();
 	}
 	
 	private class MyTask extends AsyncTask{
 
-		Dialog dialog;
+		private Dialog dialog;
+		private int wkID;
+		private int spID;
+		private String messageIndexOutOfBound = null;
 		
+		public MyTask(int wkID, int spID) {
+			this.wkID = wkID;
+			this.spID = spID;
+		}
+
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
@@ -92,9 +100,15 @@ public class WKDetails extends Activity {
 			// Read from local Cache
 			ArrayList<SpreadSheet> sps = factory.getAllSpreadSheets(false);
 			SpreadSheet sp = sps.get(spID);
-			WorkSheet wk = sp.getAllWorkSheets(false).get(wkID);
-			cols = wk.getColumns();
-			rows = wk.getData(false);
+			ArrayList<WorkSheet> allWorkSheet = sp.getAllWorkSheets(false);
+			if (wkID < allWorkSheet.size()) {
+				messageIndexOutOfBound = null;
+				WorkSheet wk = allWorkSheet.get(wkID);
+				cols = wk.getColumns();
+				rows = wk.getData(false);
+			} else {
+				messageIndexOutOfBound = "WKDetails IndexOutOfBound wkID:" + wkID + " >= allWorkSheet.size:" + allWorkSheet.size();
+			}
 			
 			return null;
 		}
@@ -105,7 +119,13 @@ public class WKDetails extends Activity {
 			super.onPostExecute(result);
 			if(dialog.isShowing())
 				dialog.cancel();
-			
+
+			if (messageIndexOutOfBound != null) {
+				tv.setText(messageIndexOutOfBound);
+				setContentView(tv);
+				return;
+			}
+
 			if(rows == null || rows.size() == 0){
 				tv.setText("No record exists....");
 				setContentView(tv);
@@ -153,7 +173,7 @@ public class WKDetails extends Activity {
 				public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 					listInverse = !listInverse;
 					list.removeHeaderView(tv);
-					new MyTask().execute();
+					new MyTask(WKDetails.this.wkID, WKDetails.this.spID).execute();
 				}
 			});
 			setContentView(list);

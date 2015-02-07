@@ -35,7 +35,9 @@ public class TraceExportBusiness {
 	public static final String DATA_STATE_NOT_CONNECTED = "NOT CONNECTED";
 
 	public enum TYPE {
-		SMS, NEXT_SCHEDULE, SET_SMS_COUNT, SET_SMS_TIME, WIKI_NOT_CONNECTED
+		SMS, SET_SMS_COUNT, SET_SMS_TIME,
+		CONTACT, SET_CONTACT_COUNT,
+		NEXT_SCHEDULE_SMS, NEXT_SCHEDULE_CONTACT, WIFI_NOT_CONNECTED
 	}
 	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat sdfExport = new SimpleDateFormat(FORMAT_DATE_EXPORT);
@@ -46,6 +48,42 @@ public class TraceExportBusiness {
 	private String data;
 
 	public void traceExportSms(final Context context, TYPE type, String data) {
+		this.type = type;
+		this.data = data;
+
+		latch = new CountDownLatch(1);
+		new AsyncTask<Object, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Object... params) {
+				try {
+					if (AuthentificationManager.isDoAuthentification()) {
+						buildData();
+						try {
+							SpreadSheetManager2 spreadSheetManager = SpreadSheetManager2.getInstance(context);
+							SpreadSheet sp = spreadSheetManager.getSpreadSheet();
+							if (sp != null) {
+								createWorkSheet(sp);
+								writeWorkSheetData();
+							}
+						} finally {
+							SpreadSheetManager2.releaseInstance();
+						}
+					}
+				} finally {
+					latch.countDown();
+				}
+				return null;
+			}
+		}.execute();
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			logMe(e);
+		}
+	}
+
+	public void traceExportContact(final Context context, TYPE type, String data) {
 		this.type = type;
 		this.data = data;
 

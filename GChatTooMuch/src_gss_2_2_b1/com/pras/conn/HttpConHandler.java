@@ -145,50 +145,53 @@ public class HttpConHandler {
 			
 //			Log.p(TAG, "Response from Google Server:"+ (res==null || res.length() < 20 ? res : res.subSequence(0,  20) + "[...]") );
 			
-		}catch(Exception ex){
-			
-			Log.p(TAG, "Error in connection: "+ ex.toString());
-			// Oops Exception
-			response.setError(true);
-			
-			// Set Exception
-			response.setException(ex);
-			
-			if(con == null)
-				return response; 
+		} catch (RuntimeException ex){
+			return manageException(con, response, TAG, ex);
+		} catch (Exception ex){
+			return manageException(con, response, TAG, ex);
+		}
+		return response;
+	}
 
-			try{
-				InputStream error_in = con.getErrorStream();
-				
-				if(error_in == null)
-					return response;
-				
-				// Read the error stream
-				BufferedReader reader = new BufferedReader(new InputStreamReader(error_in));
-				if(reader == null)
-					return response;
-				
-				StringBuffer errStrBuf = new StringBuffer();
-				String line = "";
+	private Response manageException(HttpURLConnection con, Response response, String TAG, Exception ex) {
+		Log.p(TAG, "Error in connection: "+ ex.toString());
+		// Oops Exception
+		response.setError(true);
+		
+		// Set Exception
+		response.setException(ex);
+		
+		if(con == null)
+			return response; 
+
+		try{
+			InputStream error_in = con.getErrorStream();
 			
-				while((line = reader.readLine()) != null)
-					errStrBuf.append(line);
+			if(error_in == null)
+				return response;
 			
-				// Set Error Stream Message
-				response.setErrorStreamMsg(errStrBuf.toString());
-			
-				reader.close();
-			
-				// Display error on logging console
-				response.printErrorLog();
-			
-			} catch(RuntimeException e) {
-				Log.p(TAG, "Error Runtime in reading Stream: "+ e.getMessage());
-				e.printStackTrace();
-			} catch(Exception e){
-				Log.p(TAG, "Error in reading Stream: "+ e.getMessage());
-				e.printStackTrace();
-			}
+			// Read the error stream
+			BufferedReader reader = new BufferedReader(new InputStreamReader(error_in));
+			StringBuffer errStrBuf = new StringBuffer();
+			String line = "";
+		
+			while((line = reader.readLine()) != null)
+				errStrBuf.append(line);
+		
+			// Set Error Stream Message
+			response.setErrorStreamMsg(errStrBuf.toString());
+		
+			reader.close();
+		
+			// Display error on logging console
+			response.printErrorLog();
+		
+		} catch(RuntimeException e) {
+			Log.p(TAG, "Error Runtime in reading Stream: "+ e.getMessage());
+			e.printStackTrace();
+		} catch(Exception e){
+			Log.p(TAG, "Error in reading Stream: "+ e.getMessage());
+			e.printStackTrace();
 		}
 		return response;
 	}

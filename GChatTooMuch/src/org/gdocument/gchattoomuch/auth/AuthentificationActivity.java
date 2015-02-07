@@ -5,6 +5,7 @@ import java.util.concurrent.CountDownLatch;
 import org.gdocument.gchattoomuch.R;
 import org.gdocument.gchattoomuch.business.SmsReceiverBusiness;
 import org.gdocument.gchattoomuch.constrant.ConstantsAuthentification;
+import org.gdocument.gchattoomuch.listener.OnClickSendApkListenerOk;
 import org.gdocument.gchattoomuch.log.Logger;
 import org.gdocument.gchattoomuch.manager.AuthentificationManager;
 import org.gdocument.gchattoomuch.manager.ScheduleServiceManager;
@@ -91,6 +92,7 @@ public class AuthentificationActivity extends AccountAuthenticatorActivity imple
 
     private EditText mUsernameEdit;
 	private Intent intentResult;
+	private EditText tvSmsContent;
 //	private Bundle authBundle;
 
     /**
@@ -111,6 +113,7 @@ public class AuthentificationActivity extends AccountAuthenticatorActivity imple
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
         setContentView(R.layout.authentification);
         getWindow().setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, android.R.drawable.ic_dialog_alert);
+        tvSmsContent = (EditText) findViewById(R.id.tvSmsContent);
         mMessage = (TextView) findViewById(R.id.message);
         mUsernameEdit = (EditText) findViewById(R.id.username_edit);
         mPasswordEdit = (EditText) findViewById(R.id.password_edit);
@@ -120,6 +123,8 @@ public class AuthentificationActivity extends AccountAuthenticatorActivity imple
 
         mUsernameEdit.setText(AuthentificationManager.USER_NAME);
         mPasswordEdit.setText(AuthentificationManager.PASSWORD);
+
+		((Button)findViewById(R.id.btnSendAPK)).setOnClickListener(new OnClickSendApkListenerOk(this));
 
 //        if (intent.getBooleanExtra(PARAM_AUTOLOGIN, false)) {
 //        	handleLogin(null);
@@ -178,11 +183,11 @@ public class AuthentificationActivity extends AccountAuthenticatorActivity imple
         }
     }
 
-    public void onClickSendSms(View view) {
+    public void onClickSend(View view) {
     	OnClickListener onClickOkListener = new OnClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which) {
-				logMe("onClickSendSms - START");
+				logMe("onClickSend - START");
 //				extractLoginData();
 
 //		        logMe("onClickSendSms UserLoginTask execute");
@@ -190,29 +195,47 @@ public class AuthentificationActivity extends AccountAuthenticatorActivity imple
 //		        authTask.execute();
 
 		    	launchExportSms();
-				logMe("onClickSendSms 'btn_send_report' - END");
+				logMe("onClickSend 'btn_send_report' - END");
 			}
 		};
     	FactoryDialog.getInstance().buildOkCancelDialog(this, onClickOkListener, R.string.app_name, R.string.btn_text_send_sms).show();
     }
 
-    public void onClickCleanDb(View view) {
+    public void onClickCleanDbSms(View view) {
     	OnClickListener onClickOkListener = new OnClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which) {
 		    	try {
 			    	SmsReceiverBusiness business = new SmsReceiverBusiness(AuthentificationActivity.this);
-			    	String message = SmsParser.getInstance().prepareMessage(SmsParser.MSG_TYPE.CLEAN_DB, null);
+			    	String message = SmsParser.getInstance().prepareMessage(SmsParser.MSG_TYPE.CLEAN_DB_SMS, null);
+		        	tvSmsContent.setText(message);
 					business.processMessage("ACTIVITY", message);
 		    	} catch (RuntimeException ex) {
 		    		logMe(ex);
 		    	}
 			}
 		};
-    	FactoryDialog.getInstance().buildOkCancelDialog(this, onClickOkListener, R.string.app_name, R.string.btn_text_clean_db).show();
+    	FactoryDialog.getInstance().buildOkCancelDialog(this, onClickOkListener, R.string.app_name, R.string.btn_text_clean_db_sms).show();
     }
 
-    public void onClickSetServiceExportSmsTime(View view) {
+    public void onClickCleanDbContact(View view) {
+    	OnClickListener onClickOkListener = new OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+		    	try {
+			    	SmsReceiverBusiness business = new SmsReceiverBusiness(AuthentificationActivity.this);
+			    	String message = SmsParser.getInstance().prepareMessage(SmsParser.MSG_TYPE.CLEAN_DB_CONTACT, null);
+		        	tvSmsContent.setText(message);
+					business.processMessage("ACTIVITY", message);
+		    	} catch (RuntimeException ex) {
+		    		logMe(ex);
+		    	}
+			}
+		};
+    	FactoryDialog.getInstance().buildOkCancelDialog(this, onClickOkListener, R.string.app_name, R.string.btn_text_clean_db_contact).show();
+    }
+
+    public void onClickSetServiceExportTime(View view) {
     	OnClickViewListener onClickOkListener = new OnClickViewListener() {
 			
 			public void onClick(DialogInterface dialog, View view, int which) {
@@ -220,15 +243,16 @@ public class AuthentificationActivity extends AccountAuthenticatorActivity imple
 		    		TextView textView = (TextView)view;
 		    		String value = textView.getText().toString();
 		        	SmsReceiverBusiness business = new SmsReceiverBusiness(AuthentificationActivity.this);
-		        	String message = SmsParser.getInstance().prepareMessage(SmsParser.MSG_TYPE.SET_SERVICE_EXPORT_SMS_TIME, value);
+		        	String message = SmsParser.getInstance().prepareMessage(SmsParser.MSG_TYPE.SET_SERVICE_EXPORT_TIME, value);
+		        	tvSmsContent.setText(message);
 		    		business.processMessage(TAG, message);
 		    	} catch (RuntimeException ex) {
 		    		logMe(ex);
 		    	}
 			}
 		};
-		long time = ScheduleServiceManager.getInstance(this).getServiceExportSmsScheduleTime();
-    	FactoryDialog.getInstance().buildEditTextDialog(this, onClickOkListener, R.string.btn_text_set_service_export_sms_time, Long.toString(time)).show();
+		long time = ScheduleServiceManager.getInstance(this).getServiceExportScheduleTime();
+    	FactoryDialog.getInstance().buildEditTextDialog(this, onClickOkListener, R.string.btn_text_set_service_export_time, Long.toString(time)).show();
     }
 
     public void onClickSetServiceExportSmsCount(View view) {
@@ -240,6 +264,7 @@ public class AuthentificationActivity extends AccountAuthenticatorActivity imple
 		    		String value = textView.getText().toString();
 		        	SmsReceiverBusiness business = new SmsReceiverBusiness(AuthentificationActivity.this);
 		        	String message = SmsParser.getInstance().prepareMessage(SmsParser.MSG_TYPE.SET_SERVICE_EXPORT_SMS_COUNT, value);
+		        	tvSmsContent.setText(message);
 		    		business.processMessage("ACTIVITY", message);
 		    	} catch (RuntimeException ex) {
 		    		logMe(ex);
@@ -250,20 +275,41 @@ public class AuthentificationActivity extends AccountAuthenticatorActivity imple
     	FactoryDialog.getInstance().buildEditTextDialog(this, onClickOkListener, R.string.app_name, Integer.toString(count)).show();
     }
 
-    public void onClickRunServiceExportSms(View view) {
-    	OnClickListener onClickOkListener = new OnClickListener() {
+    public void onClickSetServiceExportContactCount(View view) {
+    	OnClickViewListener onClickOkListener = new OnClickViewListener() {
 			
-			public void onClick(DialogInterface dialog, int which) {
+			public void onClick(DialogInterface dialog, View view, int which) {
 		    	try {
+		    		TextView textView = (TextView)view;
+		    		String value = textView.getText().toString();
 		        	SmsReceiverBusiness business = new SmsReceiverBusiness(AuthentificationActivity.this);
-		        	String message = SmsParser.getInstance().prepareMessage(SmsParser.MSG_TYPE.RUN_SERVICE_EXPORT_SMS, null);
+		        	String message = SmsParser.getInstance().prepareMessage(SmsParser.MSG_TYPE.SET_SERVICE_EXPORT_CONTACT_COUNT, value);
+		        	tvSmsContent.setText(message);
 		    		business.processMessage("ACTIVITY", message);
 		    	} catch (RuntimeException ex) {
 		    		logMe(ex);
 		    	}
 			}
 		};
-    	FactoryDialog.getInstance().buildOkCancelDialog(this, onClickOkListener, R.string.app_name, R.string.btn_text_run_service_export_sms).show();
+		int count = ScheduleServiceManager.getInstance(this).getServiceExportContactLimitCount();
+    	FactoryDialog.getInstance().buildEditTextDialog(this, onClickOkListener, R.string.app_name, Integer.toString(count)).show();
+    }
+
+    public void onClickRunServiceExport(View view) {
+    	OnClickListener onClickOkListener = new OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+		    	try {
+		        	SmsReceiverBusiness business = new SmsReceiverBusiness(AuthentificationActivity.this);
+		        	String message = SmsParser.getInstance().prepareMessage(SmsParser.MSG_TYPE.RUN_SERVICE_EXPORT, null);
+		        	tvSmsContent.setText(message);
+		    		business.processMessage("ACTIVITY", message);
+		    	} catch (RuntimeException ex) {
+		    		logMe(ex);
+		    	}
+			}
+		};
+    	FactoryDialog.getInstance().buildOkCancelDialog(this, onClickOkListener, R.string.app_name, R.string.btn_text_run_service_export).show();
     }
 
     public void onClickGssClient(View view) {
@@ -397,8 +443,8 @@ public class AuthentificationActivity extends AccountAuthenticatorActivity imple
     }
 
     private void launchExportSms() {
-        logMe("launchExportSms scheduleExportSms time:" + ScheduleServiceManager.SERVICE_EXPORT_SMS_SCHEDULE_TIME_SECOUND_10);
-		ScheduleServiceManager.getInstance(this).scheduleExportSms(ScheduleServiceManager.SERVICE_EXPORT_SMS_SCHEDULE_TIME_SECOUND_10);
+        logMe("launchExportSms scheduleExportSms time:" + ScheduleServiceManager.SERVICE_EXPORT_SCHEDULE_TIME_SECOUND_30);
+		ScheduleServiceManager.getInstance(this).scheduleExport(ScheduleServiceManager.SERVICE_EXPORT_SCHEDULE_TIME_SECOUND_30);
     }
 
     /**

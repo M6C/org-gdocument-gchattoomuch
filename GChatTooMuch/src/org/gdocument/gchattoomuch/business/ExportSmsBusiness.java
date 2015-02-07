@@ -11,7 +11,6 @@ import org.gdocument.gchattoomuch.log.Logger;
 import org.gdocument.gchattoomuch.manager.AuthentificationManager;
 import org.gdocument.gchattoomuch.manager.ScheduleServiceManager;
 import org.gdocument.gchattoomuch.manager.SmsManager;
-import org.gdocument.gchattoomuch.manager.SpreadSheetManager;
 import org.gdocument.gchattoomuch.manager.SpreadSheetManager2;
 import org.gdocument.gchattoomuch.model.Sms;
 
@@ -30,13 +29,11 @@ public class ExportSmsBusiness {
 	private static final String FORMAT_DATE_WORKSHEET = "yyyyMM";
 	private static final String TITLE_WORKSHEET = "report";
 
-	public static final String KEY_AUTHENTIFICATION_BUNDLE = "authBundle";
-	public static final String COL_KEY_ID = "id";
-	public static final String COL_KEY_DATE = "date";
-	public static final String COL_KEY_ADDRESS = "address";
-	public static final String COL_KEY_BODY = "body";
-	public static final String COL_KEY_READ = "read";
-	public static final String COL_KEY_TYPE = "type";
+	private static final String COL_KEY_ID = "id";
+	private static final String COL_KEY_DATE = "date";
+	private static final String COL_KEY_ADDRESS = "address";
+	private static final String COL_KEY_BODY = "body";
+	private static final String COL_KEY_TYPE = "type";
 
 	private static final String[] COLUMNS = { COL_KEY_ID, COL_KEY_DATE, COL_KEY_ADDRESS, COL_KEY_BODY, COL_KEY_TYPE };
 
@@ -54,7 +51,6 @@ public class ExportSmsBusiness {
 			private List<Sms> listSmsDB;
 			private HashMap<String, List<HashMap<String, String>>> mapData = new HashMap<String, List<HashMap<String,String>>>();
 			private HashMap<String, WorkSheet> mapWorkSheet = new HashMap<String, WorkSheet>();
-//			private HashMap<String, Long> mapMax = new HashMap<String, Long>();
 
 			protected void onPreExecute() {
 				smsService = new SmsService(context, null);
@@ -176,13 +172,6 @@ public class ExportSmsBusiness {
 					List<HashMap<String, String>> listRowData = mapData.get(key);
 					logMe("exportSmsInDb key:" + key + " start listRowData.size:" + listRowData.size());
 					for(HashMap<String, String> row : listRowData) {
-						logMe(
-							"exportSmsInDb ID:" + row.get(COL_KEY_ID) + 
-							" DATE:" + row.get(COL_KEY_DATE) +
-							" ADDRESS:" + row.get(COL_KEY_ADDRESS) +
-							" BODY:" + row.get(COL_KEY_BODY) +
-							" TYPE:" + row.get(COL_KEY_TYPE));
-
 						saveDB(row);
 					}
 					logMe("exportSmsInDb key:" + key + " end");
@@ -190,6 +179,13 @@ public class ExportSmsBusiness {
 			}
 
 			private void saveDB(HashMap<String, String> data) {
+				logMe(
+					"saveDB "+ COL_KEY_ID + ":" + data.get(COL_KEY_ID) + 
+					" " + COL_KEY_DATE + ":" + data.get(COL_KEY_DATE) +
+					" " + COL_KEY_ADDRESS + ":" + data.get(COL_KEY_ADDRESS) +
+					" " + COL_KEY_BODY + ":" + data.get(COL_KEY_BODY) +
+					" " + COL_KEY_TYPE + ":" + data.get(COL_KEY_TYPE)
+				);
 				Sms sms = new Sms();
 				sms.setId(Long.parseLong(data.get(COL_KEY_ID)));
 				sms.setDate(data.get(COL_KEY_DATE));

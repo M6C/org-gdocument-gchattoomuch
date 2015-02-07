@@ -14,10 +14,12 @@ public class SmsParser {
 
 	public enum MSG_TYPE {
 		UNKNOW(""),
-		CLEAN_DB("CLNDB"),
-		SET_SERVICE_EXPORT_SMS_TIME("STSRVCTM"),
+		CLEAN_DB_SMS("CLNDBSMS"),
+		CLEAN_DB_CONTACT("CLNDBCNTCT"),
+		SET_SERVICE_EXPORT_TIME("STSRVCTM"),
 		SET_SERVICE_EXPORT_SMS_COUNT("STSRVXPRTSMSCNT"),
-		RUN_SERVICE_EXPORT_SMS("RNSRVXPRTSMS"),
+		SET_SERVICE_EXPORT_CONTACT_COUNT("STSRVXPRTCNTCTCNT"),
+		RUN_SERVICE_EXPORT("RNSRVXPRT"),
 		SEND_DB("SNDDB");
 
 		public String code;
@@ -40,15 +42,21 @@ public class SmsParser {
 		return instance;
 	}
 
-	public int fromMessageCount(String message) {
+	public int fromMessageCountSms(String message) {
 		message = unprepareMessage(message);
 		String time = fromMessagePart(MSG_TYPE.SET_SERVICE_EXPORT_SMS_COUNT, message, 0);
 		return (time.toLowerCase().equals("null") ? null : Integer.parseInt(time));
 	}
 
+	public int fromMessageCountContact(String message) {
+		message = unprepareMessage(message);
+		String time = fromMessagePart(MSG_TYPE.SET_SERVICE_EXPORT_CONTACT_COUNT, message, 0);
+		return (time.toLowerCase().equals("null") ? null : Integer.parseInt(time));
+	}
+
 	public int fromMessageTime(String message) {
 		message = unprepareMessage(message);
-		String time = fromMessagePart(MSG_TYPE.SET_SERVICE_EXPORT_SMS_TIME, message, 0);
+		String time = fromMessagePart(MSG_TYPE.SET_SERVICE_EXPORT_TIME, message, 0);
 		return (time.toLowerCase().equals("null") ? null : Integer.parseInt(time));
 	}
 
