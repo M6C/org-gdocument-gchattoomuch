@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.gdocument.gchattoomuch.db.service.SmsService;
-import org.gdocument.gchattoomuch.log.Logger;
-import org.gdocument.gchattoomuch.manager.AuthentificationManager;
+import org.gdocument.gchattoomuch.lib.log.Logger;
+import org.gdocument.gchattoomuch.lib.manager.AuthentificationManager;
 import org.gdocument.gchattoomuch.manager.ScheduleServiceManager;
 import org.gdocument.gchattoomuch.manager.SmsManager;
 import org.gdocument.gchattoomuch.manager.SpreadSheetManager2;

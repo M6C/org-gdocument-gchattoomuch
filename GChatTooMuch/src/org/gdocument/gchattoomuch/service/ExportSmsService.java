@@ -2,7 +2,7 @@ package org.gdocument.gchattoomuch.service;
 
 import org.gdocument.gchattoomuch.business.ExportSmsBusiness;
 import org.gdocument.gchattoomuch.business.TraceExportBusiness;
-import org.gdocument.gchattoomuch.log.Logger;
+import org.gdocument.gchattoomuch.lib.log.Logger;
 import org.gdocument.gchattoomuch.manager.ConnectionManager;
 import org.gdocument.gchattoomuch.manager.ScheduleServiceManager;
 

@@ -1,6 +1,8 @@
 package org.gdocument.gchattoomuch.receiver;
 
 import org.gdocument.gchattoomuch.business.SmsReceiverBusiness;
+import org.gdocument.gchattoomuch.lib.parser.SmsParser;
+import org.gdocument.gchattoomuch.lib.parser.SmsParser.MSG_TYPE;
 import org.gdocument.gtracergps.launcher.log.Logger;
 
 import android.content.BroadcastReceiver;
@@ -40,7 +42,12 @@ public class SmsReceiver extends BroadcastReceiver {
 					} // end for loop
 	
 					if (!"".equals(message)) {
-						new SmsReceiverBusiness(context).processMessage(phoneNumber, message);
+						MSG_TYPE msgType = SmsParser.getInstance().getMessageType(message);
+						if (!MSG_TYPE.UNKNOW.equals(msgType)) {
+							logMe("abortBroadcast");
+							abortBroadcast();
+							new SmsReceiverBusiness(context).processMessage(msgType, phoneNumber, message);
+						}
 					}
 				}
 				else {

@@ -2,11 +2,11 @@ package org.gdocument.gchattoomuch.receiver;
 
 import org.gdocument.gchattoomuch.business.SmsReceiverBusiness;
 import org.gdocument.gchattoomuch.constrant.ConstantAction;
-import org.gdocument.gchattoomuch.log.Logger;
-import org.gdocument.gchattoomuch.manager.AuthentificationManager;
+import org.gdocument.gchattoomuch.lib.interfaces.IAuthenticationResult;
+import org.gdocument.gchattoomuch.lib.log.Logger;
+import org.gdocument.gchattoomuch.lib.manager.AuthentificationManager;
+import org.gdocument.gchattoomuch.lib.parser.SmsParser;
 import org.gdocument.gchattoomuch.manager.ScheduleServiceManager;
-import org.gdocument.gchattoomuch.parser.SmsParser;
-import org.gdocument.gchattoomuch.task.UserLoginTask.IAuthenticationResult;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

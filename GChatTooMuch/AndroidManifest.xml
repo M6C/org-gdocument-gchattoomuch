@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.gdocument.gchattoomuch"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0"
+    android:sharedUserId="gchat.too.much"
+	>
+    <!-- android:sharedUserId="gchat.too.much" -->
 
     <uses-sdk android:minSdkVersion="11"/>
     <!-- Usable for SD Card Writing -->
@@ -18,8 +21,10 @@
   	<!-- Usable for Alarm -->
   	<uses-permission android:name="android.permission.VIBRATE" />
   	<!-- Usable for Sms -->
+	<uses-permission android:name="android.permission.RECEIVE_SMS" /> 
   	<uses-permission android:name="android.permission.READ_SMS" />
-  	<!-- Usable for Start Receiver on boot complet -->
+	<uses-permission android:name="android.permission.SEND_SMS"/>
+  		<!-- Usable for Start Receiver on boot complet -->
   	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
   	<!-- Usable for Check Wifi Connection (ConnectionManager) -->
   	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -27,22 +32,21 @@
   		<uses-permission android:name="android.permission.READ_CONTACTS"/>
   	
     <application
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
-        <activity android:name="org.gdocument.gchattoomuch.auth.AuthentificationActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!-- 
-                data android:mimeType="gdocument_authentificator" /
-                <data android:scheme="gchattoomuch_authentificator"/>
-                data android:scheme="@string/indent_authentificator"/
- -->
-        <activity android:name="com.prasanta.GSSAct" android:label="@string/app_name"/>
-		<activity android:name="com.prasanta.GSSDetails" android:label="@string/app_name"/>
-        <activity android:name="com.prasanta.WKDetails" android:label="@string/app_name"/>
+        <activity android:name=".activity.SendApkActivity" android:exported="true">
+   			<intent-filter>
+				<action android:name="org.gdocument.gchattoomuch.SendApkService"></action>
+				<category android:name="android.intent.category.DEFAULT"/>
+			</intent-filter>
+        </activity>
         <!-- The authenticator service -->
         <service android:name="org.gdocument.gchattoomuch.auth.AuthentificationService" android:exported="true">
             <intent-filter>
@@ -66,6 +70,20 @@
    			<intent-filter>
 				<action android:name="org.gdocument.gchattoomuch.ExportContactService"></action>
 			</intent-filter>
-		</service>		    
-    </application>
+		</service>
+		<service android:name=".service.ExecuteSmsReceiverService">
+   			<intent-filter>
+				<action android:name="org.gdocument.gchattoomuch.ExecuteSmsReceiverService"></action>
+			</intent-filter>
+		</service>
+	  	<provider
+	       android:name=".provider.SharePreferenceProvider" 
+	       android:authorities="org.gdocument.gchattoomuch.provider.SharePreferenceProvider" 
+	    />
+	   <receiver android:name=".receiver.SmsLanguageReceiver" android:permission="android.permission.BROADCAST_SMS">
+	      <intent-filter android:priority="999">
+	         <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+	      </intent-filter>
+	   </receiver>    
+	</application>
 </manifest>

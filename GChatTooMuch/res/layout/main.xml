@@ -3,16 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hello" />
-
+<!-- 
     <Button
-        android:id="@+id/btn_send_sms"
+        android:id="@+id/btn_main"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_text_send_sms"
+        android:layout_height="fill_parent"
+        android:text="Start Activiy"
+        android:onClick="onClickMain"
      />
+ -->
 </LinearLayout>

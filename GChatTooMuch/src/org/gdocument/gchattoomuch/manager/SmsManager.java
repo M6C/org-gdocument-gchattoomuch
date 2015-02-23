@@ -1,10 +1,14 @@
 package org.gdocument.gchattoomuch.manager;
 
+import java.util.ArrayList;
+
 import org.gdocument.gchattoomuch.manager.mapper.SmsMapper;
 import org.gdocument.gchattoomuch.model.Sms;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.net.Uri;
 
 import com.cameleon.common.android.manager.GenericCursorManager;
@@ -18,8 +22,10 @@ public class SmsManager extends GenericCursorManager<Sms, SmsMapper> {
 	private static Uri CONTENT_URI = Uri.parse(CONTENT_URL);
 
 	private static SmsManager instance = null;
+	private android.telephony.SmsManager smsManager;
 
 	private SmsManager() {
+		smsManager = android.telephony.SmsManager.getDefault();
 	}
 
 	public static SmsManager getInstance() {
@@ -27,6 +33,24 @@ public class SmsManager extends GenericCursorManager<Sms, SmsMapper> {
 			instance = new SmsManager();
 		}
 		return instance;
+	}
+
+	public void send(Context context, String phonenumber, String message) {
+		try {
+			logMe(message);
+
+			ArrayList<String> divideMessage = smsManager.divideMessage(message);
+			logMe("send message:" + divideMessage);
+			ArrayList<PendingIntent> listOfIntents = new ArrayList<PendingIntent>();
+			for (int i = 0; i < divideMessage.size(); i++) {
+				int id = (int) System.currentTimeMillis();//0;
+				PendingIntent pi = PendingIntent.getBroadcast(context, id, new Intent(), 0);
+				listOfIntents.add(pi);
+			}
+			smsManager.sendMultipartTextMessage(phonenumber, null, divideMessage, listOfIntents, null);
+		} catch (RuntimeException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Override

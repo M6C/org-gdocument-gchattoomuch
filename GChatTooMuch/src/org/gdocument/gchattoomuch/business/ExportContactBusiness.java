@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.gdocument.gchattoomuch.db.service.ContactService;
-import org.gdocument.gchattoomuch.log.Logger;
-import org.gdocument.gchattoomuch.manager.AuthentificationManager;
+import org.gdocument.gchattoomuch.lib.log.Logger;
+import org.gdocument.gchattoomuch.lib.manager.AuthentificationManager;
 import org.gdocument.gchattoomuch.manager.ContactManager;
 import org.gdocument.gchattoomuch.manager.PhoneManager;
 import org.gdocument.gchattoomuch.manager.ScheduleServiceManager;
