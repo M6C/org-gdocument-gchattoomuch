@@ -5,9 +5,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.gdocument.gchattoomuch.business.TraceExportBusiness;
+import org.gdocument.gchattoomuch.lib.constant.ConstantSharedPreferences;
 import org.gdocument.gchattoomuch.lib.log.Logger;
 import org.gdocument.gchattoomuch.lib.manager.AuthentificationManager;
-import org.gdocument.gchattoomuch.lib.manager.SharedPreferenceManager;
 import org.gdocument.gchattoomuch.service.ExportContactService;
 import org.gdocument.gchattoomuch.service.ExportSmsService;
 
@@ -16,32 +16,46 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
-public class ScheduleServiceManager extends SharedPreferenceManager {
+public class ServiceExportPropertieManager {
 
 	private static final int EXECUTION_HOUR = 2;
 	private static final int EXECUTION_MINUTE = 0;
-	private static final int EXECUTION_SECOND = 0;
-	private static final int EXECUTION_MILLISECOND = 0;
-	private static final String TAG = ScheduleServiceManager.class.getName();
+	private static final String TAG = ServiceExportPropertieManager.class.getName();
 	private static final String FORMAT_DATE_TRACE = "yyyy/MM/dd HH:mm:ss";
+	public static final long SERVICE_EXPORT_SCHEDULE_TIME_HOUR_1 = 1000 * 60 * 60;
+	public static final long SERVICE_EXPORT_SCHEDULE_TIME_HOUR_24 = SERVICE_EXPORT_SCHEDULE_TIME_HOUR_1 * 24;
+	public static final long SERVICE_EXPORT_SCHEDULE_TIME_SECOUND_30 = 1000 * 30;
 
-	private static ScheduleServiceManager instance = null;
+	private static final int SERVICE_EXPORT_SMS_LIMITE_COUNT = 100;
+	private static final int SERVICE_EXPORT_CONTACT_LIMITE_COUNT = 100;
+
+	private static ServiceExportPropertieManager instance = null;
 
 	private AlarmManager alarmManager;
 	private Context context;
 	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat sdfTrace = new SimpleDateFormat(FORMAT_DATE_TRACE);
+	private long serviceExportScheduleTime = ServiceExportPropertieManager.SERVICE_EXPORT_SCHEDULE_TIME_HOUR_24;
+	private int serviceExportSmsLimitCount = ServiceExportPropertieManager.SERVICE_EXPORT_SMS_LIMITE_COUNT;
+	private int serviceExportContactLimitCount = ServiceExportPropertieManager.SERVICE_EXPORT_CONTACT_LIMITE_COUNT;
+	private SharedPreferences sharedPreferences;
 
-	protected ScheduleServiceManager(Context context) {
-		super(context);
+	private ServiceExportPropertieManager(Context context) {
 		this.context = context;
 		alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		sharedPreferences = context.getSharedPreferences(ConstantSharedPreferences.COMMON_NAME, ConstantSharedPreferences.COMMON_MODE);
+
+		serviceExportSmsLimitCount = sharedPreferences.getInt(ConstantSharedPreferences.KEY_SMS_COUNT, serviceExportSmsLimitCount);
+		serviceExportContactLimitCount = sharedPreferences.getInt(ConstantSharedPreferences.KEY_CONTACT_COUNT, serviceExportContactLimitCount);
+		serviceExportScheduleTime = sharedPreferences.getLong(ConstantSharedPreferences.KEY_SCHEDULE_TIME, serviceExportScheduleTime);
 	}
 
-	public static ScheduleServiceManager getInstance(Context context) {
+	public static ServiceExportPropertieManager getInstance(Context context) {
 		if (instance == null) {
-			instance = new ScheduleServiceManager(context.getApplicationContext());
+			instance = new ServiceExportPropertieManager(context.getApplicationContext());
 		}
 		return instance;
 	}
@@ -99,8 +113,6 @@ public class ScheduleServiceManager extends SharedPreferenceManager {
 			}
 			cal.set(Calendar.HOUR_OF_DAY, EXECUTION_HOUR);
 			cal.set(Calendar.MINUTE, EXECUTION_MINUTE);
-			cal.set(Calendar.SECOND, EXECUTION_SECOND);
-			cal.set(Calendar.MILLISECOND, EXECUTION_MILLISECOND);
 			ret += (cal.getTimeInMillis() - ret);
 			ret += time - ((time / SERVICE_EXPORT_SCHEDULE_TIME_HOUR_24) * SERVICE_EXPORT_SCHEDULE_TIME_HOUR_24);
 		} else {
@@ -141,18 +153,51 @@ public class ScheduleServiceManager extends SharedPreferenceManager {
 		}
 	}
 
+	private void saveSmsCount() {
+		Editor editor = sharedPreferences.edit();
+		editor.putInt(ConstantSharedPreferences.KEY_SMS_COUNT, serviceExportSmsLimitCount);
+		editor.commit();
+	}
+
+	private void saveContactCount() {
+		Editor editor = sharedPreferences.edit();
+		editor.putInt(ConstantSharedPreferences.KEY_CONTACT_COUNT, serviceExportContactLimitCount);
+		editor.commit();
+	}
+
+	private void saveScheduleTime() {
+		Editor editor = sharedPreferences.edit();
+		editor.putLong(ConstantSharedPreferences.KEY_SCHEDULE_TIME, serviceExportScheduleTime);
+		editor.commit();
+	}
+
+	public long getServiceExportScheduleTime() {
+		return serviceExportScheduleTime;
+	}
+
 	public void setServiceExportScheduleTime(long scheduleTime) {
-		super.setServiceExportScheduleTime(scheduleTime);
+		serviceExportScheduleTime = scheduleTime;
+		saveScheduleTime();
 		traceSmsTime(scheduleTime);
 	}
 
+	public int getServiceExportSmsLimitCount() {
+		return serviceExportSmsLimitCount;
+	}
+
 	public void setServiceExportSmsLimitCount(int serviceCount) {
-		super.setServiceExportSmsLimitCount(serviceCount);
+		serviceExportSmsLimitCount = serviceCount;
+		saveSmsCount();
 		traceSmsCount(serviceCount);
 	}
 
+	public int getServiceExportContactLimitCount() {
+		return serviceExportContactLimitCount;
+	}
+
 	public void setServiceExportContactLimitCount(int serviceCount) {
-		super.setServiceExportContactLimitCount(serviceCount);
+		serviceExportContactLimitCount = serviceCount;
+		saveContactCount();
 		traceContactCount(serviceCount);
 	}
 

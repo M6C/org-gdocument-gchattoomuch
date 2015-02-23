@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import org.gdocument.gchattoomuch.log.Logger;
-import org.gdocument.gchattoomuch.manager.AuthentificationManager;
+import org.gdocument.gchattoomuch.lib.log.Logger;
+import org.gdocument.gchattoomuch.lib.manager.AuthentificationManager;
 import org.gdocument.gchattoomuch.manager.SpreadSheetManager2;
 
 import android.annotation.SuppressLint;
@@ -35,9 +35,9 @@ public class TraceExportBusiness {
 	public static final String DATA_STATE_NOT_CONNECTED = "NOT CONNECTED";
 
 	public enum TYPE {
-		SMS, SET_SMS_COUNT, SET_SMS_TIME,
+		SMS, SET_SMS_COUNT,
 		CONTACT, SET_CONTACT_COUNT,
-		NEXT_SCHEDULE_SMS, NEXT_SCHEDULE_CONTACT, WIFI_NOT_CONNECTED
+		SET_TIME, NEXT_SCHEDULE_SMS, NEXT_SCHEDULE_CONTACT, WIFI_NOT_CONNECTED
 	}
 	@SuppressLint("SimpleDateFormat")
 	private SimpleDateFormat sdfExport = new SimpleDateFormat(FORMAT_DATE_EXPORT);
@@ -47,7 +47,7 @@ public class TraceExportBusiness {
 	private TYPE type;
 	private String data;
 
-	public void traceExportSms(final Context context, TYPE type, String data) {
+	public synchronized void traceExportSms(final Context context, TYPE type, String data) {
 		this.type = type;
 		this.data = data;
 

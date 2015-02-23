@@ -1,16 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World of Shit!</string>
     <string name="app_name">Chat Too Much</string>
-    <string name="txt_delete">Delete</string>
-    <string name="btn_text_send_sms">Send</string>
-    <string name="btn_text_clean_db_sms">Clean DB SMS</string>
-    <string name="btn_text_clean_db_contact">Clean DB CONTACT</string>
-    <string name="btn_text_set_service_export_time">Set Time</string>
-    <string name="btn_text_set_service_export_sms_count">Set Count SMS</string>
-    <string name="btn_text_set_service_export_contact_count">Set Count CONTACT</string>
-    <string name="btn_text_run_service_export">Run</string>
-    <string name="btn_text_gss_client">Gss Client</string>
-    <string name="btn_text_send_apk">Send APK</string>
+
 </resources>

@@ -3,9 +3,10 @@ package org.gdocument.gchattoomuch.manager;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import org.gdocument.gchattoomuch.log.Logger;
-import org.gdocument.gchattoomuch.task.UserLoginTask;
-import org.gdocument.gchattoomuch.task.UserLoginTask.IAuthenticationResult;
+import org.gdocument.gchattoomuch.lib.interfaces.IAuthenticationResult;
+import org.gdocument.gchattoomuch.lib.log.Logger;
+import org.gdocument.gchattoomuch.lib.manager.AuthentificationManager;
+import org.gdocument.gchattoomuch.lib.task.UserLoginTask;
 
 import android.content.Context;
 import android.os.AsyncTask;
